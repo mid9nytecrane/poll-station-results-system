@@ -1,0 +1,78 @@
+{% load static %}
+<link rel="stylesheet" type='text/css' href="{% static 'css/styles.css'%}">
+<div class="graph-container">
+
+    <div>
+        <canvas id="myChart" width="400", height="400"></canvas>
+      </div>
+      
+      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+      
+      <script>
+        const ctx = document.getElementById('myChart');
+      
+        new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: [{% for party in party_labels %} '{{party}}', {% endfor %}],
+            datasets: [{
+              label: 'Presidential  Votes',
+              data: [{% for result in party_data %} {{result}}, {% endfor %}],
+              backgroundColor:[
+                  'rgba(255,90,132,1)',
+                  'rgba(54, 102,215,1)',
+                  'rgba(255,206,80,1)',
+                  'rgba(74,192,192,1)',
+                  'rgba(153,182,255,1)',
+                  'rgba(255,159,64,1 )'
+                ],
+              borderWidth: 1
+              
+            }]
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            }
+          }
+        });
+      </script>
+    
+      
+    
+      <!--second chart-->
+      <br>
+    
+      <div>
+        <canvas id="Chart" width="400", height="400"></canvas>
+      </div>
+      
+      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+      
+      <script>
+        const ctx2 = document.getElementById('Chart');
+      
+        new Chart(ctx2, {
+          type: 'doughnut',
+          data: {
+            labels: [{% for parl_party in parl_party_labels %} '{{parl_party}}', {% endfor %}],
+            datasets: [{
+              label: 'Parliamentary  Votes',
+              data: [{% for parl_data in parl_party_data %} {{parl_data}}, {% endfor %}],
+              borderWidth: 1
+            }]
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            }
+          }
+        });
+      </script>
+    
+      
+</div>

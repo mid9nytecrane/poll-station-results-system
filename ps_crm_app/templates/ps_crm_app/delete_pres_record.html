@@ -1,0 +1,21 @@
+{% extends 'ps_crm_app/base.html' %}
+
+
+{% block content %}
+<div class="col-md-6 offset-md-3">
+    <h2>Are You Sure, You Want To Delete {{ delete_pres_record }}</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        
+        <br>
+        <a href="{% url 'poll' current_presidential.id%}" class="btn btn-secondary btn-lg">No</a>
+        <button type="submit" class="btn btn-danger btn-lg">Yes</button>
+       
+    </form>
+</div>
+
+{% endblock content %}
+
+

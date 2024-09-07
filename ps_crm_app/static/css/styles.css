@@ -1,0 +1,46 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+
+
+#total-votes{
+    background-color: rgb(135, 212, 222);
+    box-shadow: 0 0 16px rgba(0,0,0,.8);
+}
+
+#valid-votes{
+    background-color: rgb(44, 163, 64);
+    box-shadow: 0 0 16px rgba(0,0,0,.8);
+}
+
+#rejected-votes{
+    background-color: crimson;
+    box-shadow: 0 0 16px rgba(0,0,0,.8);
+}
+
+#registered-votes{
+    background-color: rgb(147, 25, 196);
+    box-shadow: 0 0 16px rgba(0,0,0,.8);
+}
+
+.graph-container{
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 100vh;
+    gap: 80px;
+    padding-top:10px;
+}
+
+#Chart, #myChart{
+    padding: 2rem;
+    border:1px solid #f49131;
+    border-radius: 1rem;
+    background-color: #251c35;
+    box-shadow: 0 0 16px rgba(0,0,0,.8);
+    color: white;
+}
+
+.btn{
+    font-size: Poppins;
+}

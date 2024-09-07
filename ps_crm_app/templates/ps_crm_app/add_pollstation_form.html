@@ -1,0 +1,26 @@
+
+{% extends 'ps_crm_app/base.html' %}
+
+{% block content %}
+
+{% if user.is_authenticated %}
+
+<div class="col-md-6 offset-md-3">
+    <h3>Add Poll Station</h3>
+    <form method="POST" action="{% url 'add_poll_stations'%}">
+        {% csrf_token %}
+
+        {{form.as_p}}
+        <br>
+        <button type="submit" class="btn btn-secondary">Add Poll Station</button>
+    </form>
+</div>
+
+{% else %}
+
+{% endif %}
+
+
+{% endblock content %}
+
+

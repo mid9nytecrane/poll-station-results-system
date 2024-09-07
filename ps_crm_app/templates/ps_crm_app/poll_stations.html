@@ -1,0 +1,41 @@
+{% extends 'ps_crm_app/base.html' %}
+
+
+
+{% block content %}
+<table class="table  table-striped table-hover table-bordered">
+    <thead class="table-dark">
+      <tr>
+        <th scope="col">Name</th>
+        <th scope="col">PSCode</th>
+        <th scope="col">Serial Number</th>
+        <th scope="col">Registered Votes</th>
+        <th scope="col">Updated At</th>
+        <th scope="col"></th>
+        <th scope="col"></th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+    <tbody class="table-striped">
+      {% if stations %}
+        {% for station in stations%}
+        <tr>
+          <td>{{ station.ps_name }}</title></td>
+          <td>{{ station.ps_code }}</td>
+          <td>{{ station.serial_num }}</td>
+          <td>{{ station.reg_voters}}</td>
+          <td>{{ station.updated_at }}</td>
+          <td><a href="{% url 'poll' station.id %}" class="btn btn-primary btn-sm">view</a></td>
+          <td><a href="{% url 'updatePollstation' station.id %}" class="btn btn-warning btn-sm">update</a></td>
+          <td><a href="{% url 'delete' station.id %}" class="btn btn-danger btn-sm">delete</a></td>
+        {% endfor %}
+      {% endif %}
+      
+
+      </tr>
+    </tbody>
+    </table>
+  
+{% endblock content %}
+
+

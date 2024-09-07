@@ -1,0 +1,23 @@
+{% extends 'ps_crm_app/base.html' %}
+
+{% block content %}
+<div class="col-md-6 offset-md-3">
+    <h2>update parliamentary result</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        {{form.as_p}}
+        <br>
+        <button type="submit" class="btn btn-success">Update</button>
+        <a href="{% url 'poll' poll_station.id%}" class="btn btn-secondary btn-md">Back</a>
+        
+       
+    </form>
+</div>
+
+
+{% endblock content %}
+
+
+

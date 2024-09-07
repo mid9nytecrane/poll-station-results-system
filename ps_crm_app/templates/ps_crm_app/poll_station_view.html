@@ -1,0 +1,91 @@
+{% extends 'ps_crm_app/base.html' %}
+
+
+{% block content %}
+<a href="{% url 'poll_station'%}" class="btn btn-secondary btn-md"> Back</a>
+<br>
+<h2>{{poll_station.ps_name}}</h2>
+
+{% include 'ps_crm_app/status.html' %}
+  <div class="row">
+    <div class="col-md-6">
+        <h5>Presidential</h5>
+        <hr>
+        <div class="card card-body">
+            <a href="{% url 'pres_result' poll_station.id%}" class="btn btn-md btn-block btn-info fw-bold">Add Presidential Results</a>
+            <br>
+            <table class="table table-sm table-bordered table-striped table-hover ">
+                <thead class="">
+                <tr>
+                    <th>Name</th>
+                    <th>Party</th>
+                    <th>Votes</th>
+                   
+                    <th></th>
+                    <th></th>
+                    
+                </tr>
+                </thead>
+                <tbody>
+                    {% if data_entries %}
+                        {% for data in data_entries %}
+                        <tr>
+                            <td>{{data.name}}</td>
+                            <td>{{data.party}}</td>
+                            <td>{{data.votes}}</td>
+                            
+                            <td><a href="{% url 'updatePres' poll_station.id data.id%}" class="btn btn-small btn-warning">update</a></td>
+                            <td><a href="{% url 'delete_pres' poll_station.id data.id%}" class="btn btn-small btn-danger">delete</a></td>
+                        </tr>
+                        {% endfor %}
+                    {% endif %}
+                    
+
+                    
+                </tbody>
+                
+
+            </table>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <h5>Parliamentary</h5>
+        <hr>
+        <div class="card card-body">
+            <a href="{% url 'parl_result' poll_station.id %}" class="btn btn-md btn-block btn-info fw-bold">Add Parliamentary Results</a>
+            <br>
+            <table class="table table-sm table-bordered ">
+                <thead class="">
+                    <tr>
+                        <th>Name</th>
+                        <th>Party</th>
+                        <th>Votes</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                
+                <tbody>
+                    {% if parl_results %}
+                        {% for result in parl_results %}
+                        <tr>
+                            <td>{{result.name}}</td>
+                            <td>{{result.party}}</td>
+                            <td>{{result.votes}}</td>
+                            <td><a href="{% url 'updateParl' poll_station.id result.id %} " class="btn btn-small btn-warning">update</a></td>
+                            <td><a href="{% url 'delete_parl' poll_station.id result.id%}" class="btn btn-small btn-danger">delete</a></td>
+                        </tr>
+                        {% endfor %}
+                    {% endif %}
+                </tbody>
+
+            </table>
+           
+        </div>
+    </div>
+  </div>
+
+{% endblock content %}
+
+
