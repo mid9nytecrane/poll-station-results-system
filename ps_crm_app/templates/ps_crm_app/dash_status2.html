@@ -3,13 +3,13 @@
 <div class="row">
     <div class="col">
         <div class="col-md">
-            <div class="card text-center text-white mb-3", id="total-votes">
+            <div class="card text-center text-white mb-3", id="total-pres-votes">
                 <div class="card-header">
-                    <h5 class="card-title">Total Poll Station</h5>
+                    <h5 class="card-title">Total Valid Votes(presidential)</h5>
                     
                 </div>
                 <div class="card-body">
-                    <h3 class="card-title">{{ station_count }}</h3>
+                    <h3 class="card-title">{{ total_pres_votes}}</h3>
                 </div>
             </div>
         </div>
@@ -17,45 +17,21 @@
 
     <div class="col">
         <div class="col-md">
-            <div class="card text-center text-white mb-3 ", id="valid-votes">
+            <div class="card text-center text-white mb-3 ", id="#total-parl-votes">
                 <div class="card-header">
-                    <h5 class="card-title">Total-Valid-Votes</h5>
+                    <h5 class="card-title">Total-Valid-Votes(parliamentary)</h5>
 
                 </div>
                 <div class="card-body">
-                    <h3 class="card-title">{{c_total_valid_votes}}</h3>
+                    <h3 class="card-title">{{total_parl_votes}}</h3>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="col">
-        <div class="col-md">
-            <div class="card text-center text-white mb-3 ", id="rejected-votes" >
-                <div class="card-header">
-                    <h5 class="card-title">Rejected/Absent Voters</h5>
+  
 
-                </div>
-                <div class="card-body">
-                    <h3 class="card-title">{{ c_rejected_votes }}</h3>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col">
-        <div class="col-md">
-            <div class="card text-center text-white mb-3 ", id="registered-votes" >
-                <div class="card-header">
-                    <h5 class="card-title">Total-Registered-Voters</h5>
-
-                </div>
-                <div class="card-body">
-                    <h3 class="card-title">{{ total_registered_voters }}</h3>
-                </div>
-            </div>
-        </div>
-    </div>
+   
 
     
     

@@ -80,6 +80,11 @@ def dashboard_page(request):
     parl_party_data = [parl_npp_percentage,parl_ndc_percentage]
     parl_party_labels = ['NPP','NDC']
 
+    #getting the total valid for PRESIDENTIAL
+    total_pres_votes = npp_valid_votes + ndc_valid_votes + new_force_valid_votes + movement_for_change_valid_votes
+
+    #getting the total valid for PARLIAMENTARY 
+    total_parl_votes = parl_npp_valid_votes + parl_ndc_valid_votes
 
     station = pollStations.objects.all()
     station_count = station.count
@@ -98,7 +103,7 @@ def dashboard_page(request):
             messages.success(request, 'Invalid username or password'.title())
             return redirect('dashboard')
     else:
-        return render(request,'ps_crm_app/dashboard_page.html',{'station_count':station_count, 'p_results':p_results, 'total_registered_voters':total_registered_voters, 'c_total_valid_votes':c_total_valid_votes, 'c_rejected_votes':c_rejected_votes, 'parl_total_valid_votes':parl_total_valid_votes, 'party_data':party_data, 'party_labels':party_labels, 'parl_party_data':parl_party_data, 'parl_party_labels':parl_party_labels,})
+        return render(request,'ps_crm_app/dashboard_page.html',{'station_count':station_count, 'p_results':p_results, 'total_registered_voters':total_registered_voters, 'c_total_valid_votes':c_total_valid_votes, 'c_rejected_votes':c_rejected_votes, 'parl_total_valid_votes':parl_total_valid_votes, 'party_data':party_data, 'party_labels':party_labels, 'parl_party_data':parl_party_data, 'parl_party_labels':parl_party_labels, 'total_pres_votes':total_pres_votes, 'total_parl_votes':total_parl_votes})
     
 
 def logout_user(request):

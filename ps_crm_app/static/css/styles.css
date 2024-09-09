@@ -27,6 +27,20 @@
     border:1px solid #f49131;
 }
 
+#total-pres-votes{
+    background-color: royalblue;
+    box-shadow: 0 0 16px rgba(0,0,0,.8);
+    border:1px solid #f49131;
+}
+
+#total-parl-votes{
+    background-color: #f4c031;
+    box-shadow: 0 0 16px rgba(0,0,0,.8);
+    border:1px solid #f49131;
+}
+
+
+
 .graph-container{
     display:flex;
     align-items: center;
