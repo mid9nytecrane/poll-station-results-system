@@ -28,13 +28,13 @@
 }
 
 #total-pres-votes{
-    background-color: royalblue;
+    background-color: rgb(77, 132, 214);
     box-shadow: 0 0 16px rgba(0,0,0,.8);
     border:1px solid #f49131;
 }
 
 #total-parl-votes{
-    background-color: #f4c031;
+    background-color: rgba(212, 61, 200, 0.89);
     box-shadow: 0 0 16px rgba(0,0,0,.8);
     border:1px solid #f49131;
 }
