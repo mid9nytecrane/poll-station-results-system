@@ -200,7 +200,7 @@ def add_pres_result(request, station_id):
         form = presResultForm()
         return render(request, 'ps_crm_app/pres_form.html',{
             'form':form,
-            'poll_sation':poll_station,
+            'poll_station':poll_station,
         })
     
 
@@ -222,7 +222,7 @@ def add_parl_result(request, station_id):
         form = parlResultForm()
         return render(request, 'ps_crm_app/parl_form.html',{
             'form':form,
-            'poll_sation':poll_station,
+            'poll_station':poll_station,
         })
     
 

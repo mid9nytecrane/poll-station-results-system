@@ -9,7 +9,8 @@
 
         {{form.as_p}}
 
-        <button type="submit" class="btn btn-secondary">Submit</button>
+        <button type="submit" class="btn btn-success">Submit</button>
+        <a href="{% url 'poll' poll_station.id%}" class="btn btn-secondary">Back</a>
     </form>
 </div>
 
