@@ -6,21 +6,25 @@
 #total-votes{
     background-color: rgb(135, 212, 222);
     box-shadow: 0 0 16px rgba(0,0,0,.8);
+    border:1px solid #f49131;
 }
 
 #valid-votes{
     background-color: rgb(44, 163, 64);
     box-shadow: 0 0 16px rgba(0,0,0,.8);
+    border:1px solid #f49131;
 }
 
 #rejected-votes{
     background-color: crimson;
     box-shadow: 0 0 16px rgba(0,0,0,.8);
+    border:1px solid #f49131;
 }
 
 #registered-votes{
     background-color: rgb(147, 25, 196);
     box-shadow: 0 0 16px rgba(0,0,0,.8);
+    border:1px solid #f49131;
 }
 
 .graph-container{
