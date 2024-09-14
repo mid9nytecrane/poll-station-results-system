@@ -76,15 +76,25 @@ def dashboard_page(request):
     #NPP PERCENTAGE FOR PARLIAMENTARY
     parl_npp_percentage = (parl_npp_valid_votes / parl_total_valid_votes) * 100
 
+    #getting the total votes for independent candidate for parliamentary type election
+    independent = pollStations.objects.annotate(
+        independent=Sum('parlresult__votes',filter=Q(parlresult__party='INDEPENDENT'))
+    ).aggregate(Sum('independent'))['independent__sum'] or 0
+
+    #percentage for independent candidate
+    independent_percentage = (independent/parl_total_valid_votes) * 100
+
+
     #parliamentary data list and labels
-    parl_party_data = [parl_npp_percentage,parl_ndc_percentage]
-    parl_party_labels = ['NPP','NDC']
+    parl_party_data = [parl_npp_percentage,parl_ndc_percentage, independent_percentage]
+    parl_party_labels = ['NPP','NDC','INDEPENDENT']
 
     #getting the total valid for PRESIDENTIAL
     total_pres_votes = npp_valid_votes + ndc_valid_votes + new_force_valid_votes + movement_for_change_valid_votes
 
     #getting the total valid for PARLIAMENTARY 
-    total_parl_votes = parl_npp_valid_votes + parl_ndc_valid_votes
+    #total_parl_votes = parl_npp_valid_votes + parl_ndc_valid_votes
+    total_parl_votes = parl_total_valid_votes
 
     station = pollStations.objects.all()
     station_count = station.count
@@ -103,7 +113,7 @@ def dashboard_page(request):
             messages.success(request, 'Invalid username or password'.title())
             return redirect('dashboard')
     else:
-        return render(request,'ps_crm_app/dashboard_page.html',{'station_count':station_count, 'p_results':p_results, 'total_registered_voters':total_registered_voters, 'c_total_valid_votes':c_total_valid_votes, 'c_rejected_votes':c_rejected_votes, 'parl_total_valid_votes':parl_total_valid_votes, 'party_data':party_data, 'party_labels':party_labels, 'parl_party_data':parl_party_data, 'parl_party_labels':parl_party_labels, 'total_pres_votes':total_pres_votes, 'total_parl_votes':total_parl_votes})
+        return render(request,'ps_crm_app/dashboard_page.html',{'station_count':station_count, 'p_results':p_results, 'total_registered_voters':total_registered_voters, 'c_total_valid_votes':c_total_valid_votes, 'c_rejected_votes':c_rejected_votes, 'parl_total_valid_votes':parl_total_valid_votes, 'party_data':party_data, 'party_labels':party_labels, 'parl_party_data':parl_party_data, 'parl_party_labels':parl_party_labels, 'total_pres_votes':total_pres_votes, 'total_parl_votes':total_parl_votes,})
     
 
 def logout_user(request):
@@ -246,9 +256,15 @@ def update_pollstation(request, station_id):
 def delete_pollstation(request,station_id):
     if request.user.is_authenticated:
         poll_station = pollStations.objects.get(id=station_id)
-        poll_station.delete()
-        messages.success(request, f'{poll_station} poll station has been deleted'.title())
-        return redirect('poll_station')
+        if request.method == 'POST':
+            
+            poll_station.delete()
+            messages.success(request, f'{poll_station} poll station has been deleted'.title())
+            return redirect('poll_station',)
+        context = {
+            'poll_station':poll_station,
+        }
+        return render(request, 'ps_crm_app/delete_pollstation.html', context)
     else:
         messages.success(request, 'you have to be logged in before you can view this page'.title())
         return redirect('poll_station')

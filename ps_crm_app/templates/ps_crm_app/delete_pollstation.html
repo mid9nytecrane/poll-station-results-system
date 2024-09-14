@@ -1,0 +1,19 @@
+{% extends 'ps_crm_app/base.html' %}
+
+
+{% block content %}
+<div class="col-md-6 offset-md-3">
+    <h3>Are you sure you want to delete <strong>{{poll_station.ps_name}}</strong></h3>
+    <form method="POST">
+        {% csrf_token %}
+
+        <br>
+
+        <a href="{% url 'poll_station'%}" class="btn btn-secondary btn-lg">No</a>
+        <button type="submit" class="btn btn-danger btn-lg">Yes</button>
+    </form>
+  
+</div>
+{% endblock content %}
+
+

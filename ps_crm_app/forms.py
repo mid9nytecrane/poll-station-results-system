@@ -90,6 +90,7 @@ class parlResultForm(forms.ModelForm):
         'NPP':'NPP',
         'NEW FORCE': 'NEW FORCE',
         'MOVEMENT FOR CHANGE': 'MOVEMENT FOR CHANGE',
+        'INDEPENDENT':'INDEPENDENT',
     }
 
 

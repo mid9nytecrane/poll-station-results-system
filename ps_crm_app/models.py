@@ -45,6 +45,7 @@ class parlResult(models.Model):
         'NPP':'NPP',
         'NEW FORCE': 'NEW FORCE',
         'MOVEMENT FOR CHANGE': 'MOVEMENT FOR CHANGE',
+        'INDEPENDENT':'INDEPENDENT',
     }
 
     poll_station = models.ForeignKey(pollStations,on_delete=models.CASCADE)
