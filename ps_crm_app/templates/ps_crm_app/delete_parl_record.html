@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="col-md-6 offset-md-3">
-    <h2>Are You Sure, You Want To Delete {{ delete_parl_record }}</h2>
+    <h3>Are You Sure, You Want To Delete <strong>{{ delete_parl_record }}</strong></h3>
 
     <form method="POST">
         {% csrf_token %}

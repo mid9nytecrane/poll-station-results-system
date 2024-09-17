@@ -109,4 +109,4 @@ class parlResultForm(forms.ModelForm):
 
     class Meta:
         model = parlResult
-        fields =  ('name', 'party', 'votes')
+        fields =  ('name', 'party', 'votes') 
