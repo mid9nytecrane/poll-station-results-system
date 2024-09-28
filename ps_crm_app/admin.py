@@ -4,3 +4,5 @@ from .models import*
 admin.site.register(pollStations)
 admin.site.register(presResult)
 admin.site.register(parlResult)
+
+admin.site.register(regPollAgent)

@@ -16,7 +16,7 @@
           data: {
             labels: [{% for party in party_labels %} '{{party}}', {% endfor %}],
             datasets: [{
-              label: 'Presidential  Votes',
+              label: 'Presidential',
               data: [{% for result in party_data %} {{result}}, {% endfor %}],
               backgroundColor:[
                   'rgba(255,90,132,1)',

@@ -1,0 +1,20 @@
+{% extends 'ps_crm_app/base.html' %}
+
+{% block content %}
+<div class="col-md-6 offset-md-3">
+    
+    <form method="POST">
+        {% csrf_token %}
+        <form>
+             
+            <div class="mb-3">
+              <input type="text" class="form-control", name="otp", placeholder="enter otp code"  required>
+            </div>
+            
+            <button type="submit" class="btn btn-secondary btn-md">confirm</button>
+          </form>
+    </form>
+    </div>
+{% endblock content %}
+
+

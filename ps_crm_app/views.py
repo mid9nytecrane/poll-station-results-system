@@ -1,125 +1,196 @@
 from django.shortcuts import render,redirect,get_object_or_404
-from django.contrib.auth import login, logout,authenticate
+from django.contrib.auth import login, logout,authenticate, SESSION_KEY
 from django.contrib import messages
-from .models import pollStations,presResult, parlResult
-from .forms import pollStationForm,presResultForm,parlResultForm, SignupForm
+from .models import pollStations,presResult, parlResult,regPollAgent
+from .forms import pollStationForm,presResultForm,parlResultForm, SignupForm,PollAgentForm
 from django.db.models import Sum,Q
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from .utils import send_otp
+from datetime import datetime 
+import pyotp
+
+
+
 
 # Create your views here.
-
-def dashboard_page(request):
-    poll_station = pollStations.objects.annotate(total_valid_votes=Sum('presresult__votes'))
-    c_total_valid_votes= poll_station.aggregate(total_valid_votes_all=Sum('total_valid_votes')).get('total_valid_votes_all') or 0
-    #total calculate the number of registered voters
-    #it takes every number of registered votes from each poll station and sum them 
-    #and stores them in total_registered_voters
-    total_registered_voters = pollStations.objects.aggregate(total=Sum('reg_voters')).get('total') or 0
-    #total rejected votes for all poll stations
-    c_rejected_votes = total_registered_voters - c_total_valid_votes
-    
-    #getting the total valid for npp in presidential type election 
-    npp_valid_votes = pollStations.objects.annotate(
-    npp_valid_votes=Sum('presresult__votes', filter=Q(presresult__party='NPP'))
-    ).aggregate(Sum('npp_valid_votes'))['npp_valid_votes__sum'] or 0
-    
-    #calculating the percentage for npp
-    npp_percentage = (npp_valid_votes / c_total_valid_votes) * 100 
-
-    #getting the total valid votes for ndc in presidential type election
-    ndc_valid_votes = pollStations.objects.annotate(
-    ndc_valid_votes=Sum('presresult__votes', filter=Q(presresult__party='NDC'))
-    ).aggregate(Sum('ndc_valid_votes'))['ndc_valid_votes__sum'] or 0
-    #calculating the percentage for ndc
-    ndc_percentage = (ndc_valid_votes / c_total_valid_votes) * 100 
-
-
-    #getting the total valid votes for new force in presidential type election
-    new_force_valid_votes = pollStations.objects.annotate(
-        new_force_valid_votes=Sum('presresult__votes', filter=Q(presresult__party='NEW FORCE'))
-    ).aggregate(Sum('new_force_valid_votes'))['new_force_valid_votes__sum'] or 0 
-
-    #new force percentage 
-    new_force_percentage = (new_force_valid_votes / c_total_valid_votes) * 100
-
-    
-    #getting the total valid votes for movement for change 
-
-    movement_for_change_valid_votes = pollStations.objects.annotate(
-    movement_for_change_valid_votes=Sum('presresult__votes', filter=Q(presresult__party='MOVEMENT FOR CHANGE'))
-    ).aggregate(Sum('movement_for_change_valid_votes'))['movement_for_change_valid_votes__sum'] or 0
-
-    #MOVEMENT FOR CHANGE percentage
-    movement_for_change_percentage = (movement_for_change_valid_votes / c_total_valid_votes) * 100
-
-    #list of party percentages and labels for presidential type election
-    party_data = [npp_percentage, ndc_percentage,new_force_percentage,movement_for_change_percentage]
-    party_labels = ['NPP','NDC','NEW FORCE', 'MOVEMENT FOR CHANGE']
-
-
-    #parliamentary type election
-    
-
-    parl_total_valid_votes = pollStations.objects.annotate(parl_total_valid_votes=Sum('parlresult__votes')).aggregate(Sum('parl_total_valid_votes'))['parl_total_valid_votes__sum'] or 0
-    
-    #getting the total valid votes for ndc in parliamentary type election
-    parl_ndc_valid_votes = pollStations.objects.annotate(parl_ndc_valid_votes=Sum('parlresult__votes',filter=Q(parlresult__party='NDC'))).aggregate(Sum('parl_ndc_valid_votes'))['parl_ndc_valid_votes__sum'] or 0
-
-    #NDC PERCENTAGE FOR PARLIAMENTARY 
-    parl_ndc_percentage = (parl_ndc_valid_votes / parl_total_valid_votes)  * 100
-
-
-    #getting the total valid votes for npp in parliamentary type election
-    parl_npp_valid_votes = pollStations.objects.annotate(
-        parl_npp_valid_votes=Sum('parlresult__votes', filter=Q(parlresult__party='NPP'))
-    ).aggregate(Sum('parl_npp_valid_votes'))['parl_npp_valid_votes__sum'] or 0
-
-    #NPP PERCENTAGE FOR PARLIAMENTARY
-    parl_npp_percentage = (parl_npp_valid_votes / parl_total_valid_votes) * 100
-
-    #getting the total votes for independent candidate for parliamentary type election
-    independent = pollStations.objects.annotate(
-        independent=Sum('parlresult__votes',filter=Q(parlresult__party='INDEPENDENT'))
-    ).aggregate(Sum('independent'))['independent__sum'] or 0
-
-    #percentage for independent candidate
-    independent_percentage = (independent/parl_total_valid_votes) * 100
-
-
-    #parliamentary data list and labels
-    parl_party_data = [parl_npp_percentage,parl_ndc_percentage, independent_percentage]
-    parl_party_labels = ['NPP','NDC','INDEPENDENT']
-
-    #getting the total valid for PRESIDENTIAL
-    total_pres_votes = npp_valid_votes + ndc_valid_votes + new_force_valid_votes + movement_for_change_valid_votes
-
-    #getting the total valid for PARLIAMENTARY 
-    #total_parl_votes = parl_npp_valid_votes + parl_ndc_valid_votes
-    total_parl_votes = parl_total_valid_votes
-
-    station = pollStations.objects.all()
-    station_count = station.count
-    p_results = presResult.objects.all()
-
+#login user
+def login_user(request):
     if request.method == "POST":
         username = request.POST['username']
         password = request.POST['password']
 
         user = authenticate(request,username=username, password=password)
         if user is not None:
-            login(request, user)
-            messages.success(request, f'You have logged In as {user}'.title())
-            return redirect('dashboard')
+            send_otp(request)
+            request.session['username'] = username
+            
+            #login(request, user)
+            messages.success(request, f'otp code has been sent to you, it will expire after 120 second')
+            return redirect('otp')
         else:   
-            messages.success(request, 'Invalid username or password'.title())
-            return redirect('dashboard')
-    else:
-        return render(request,'ps_crm_app/dashboard_page.html',{'station_count':station_count, 'p_results':p_results, 'total_registered_voters':total_registered_voters, 'c_total_valid_votes':c_total_valid_votes, 'c_rejected_votes':c_rejected_votes, 'parl_total_valid_votes':parl_total_valid_votes, 'party_data':party_data, 'party_labels':party_labels, 'parl_party_data':parl_party_data, 'parl_party_labels':parl_party_labels, 'total_pres_votes':total_pres_votes, 'total_parl_votes':total_parl_votes,})
+            messages.success(request, 'invalid username or password'.title())
+            return redirect('login')
+    return render(request, 'ps_crm_app/login.html', {})
+
+#otp view function
+
+def otp_view(request):
+    #print(f"User: {request.user}, Authenticated: {request.user.is_authenticated}")
+   
+    if request.method == 'POST':
+        
+        otp = request.POST['otp']
+        username = request.session['username']
     
+        otp_secret_key = request.session['otp_secret_key']
+        otp_valid_date = request.session['otp_valid_date']
+    
+        if otp_secret_key and otp_valid_date is not None:
+            valid_until = datetime.fromisoformat(otp_valid_date)
+        
+            if datetime.now() < valid_until:
+                #user = authenticate(request,otp=otp)
+                totp = pyotp.TOTP(otp_secret_key, interval=120)
+        
+                if totp.verify(otp):
+                    # user = authenticate(request, username=username, otp=otp)
+                    user = get_object_or_404(User, username=username)
+                    
+                    #print(f'user: {user}')
+                    login(request, user)
+
+                    del request.session['otp_secret_key']
+                    del request.session['otp_valid_date']
+                    
+                    messages.success(request, f' Welcome {user}')
+                    return redirect('dashboard')
+                    
+                else:
+                    messages.error(request,'incorrect otp')
+            else:
+                messages.error(request, 'otp has expired')
+                return redirect('login')
+        else:
+            messages.error(request,'otp is not available')
+
+    return render(request, 'ps_crm_app/otp.html', {})
+
+
+
+
+#dashboard or main view
+
+def dashboard_page(request):
+    if request.user.is_authenticated:
+        poll_station = pollStations.objects.annotate(total_valid_votes=Sum('presresult__votes'))
+        c_total_valid_votes= poll_station.aggregate(total_valid_votes_all=Sum('total_valid_votes')).get('total_valid_votes_all') or 0
+        #total calculate the number of registered voters
+        #it takes every number of registered votes from each poll station and sum them 
+        #and stores them in total_registered_voters
+        total_registered_voters = pollStations.objects.aggregate(total=Sum('reg_voters')).get('total') or 0
+        #total rejected votes for all poll stations
+        c_rejected_votes = total_registered_voters - c_total_valid_votes
+        
+        #getting the total valid for npp in presidential type election 
+        npp_valid_votes = pollStations.objects.annotate(
+        npp_valid_votes=Sum('presresult__votes', filter=Q(presresult__party='NPP'))
+        ).aggregate(Sum('npp_valid_votes'))['npp_valid_votes__sum'] or 0
+        
+        #calculating the percentage for npp
+        npp_percentage = (npp_valid_votes / c_total_valid_votes) * 100 
+
+        #getting the total valid votes for ndc in presidential type election
+        ndc_valid_votes = pollStations.objects.annotate(
+        ndc_valid_votes=Sum('presresult__votes', filter=Q(presresult__party='NDC'))
+        ).aggregate(Sum('ndc_valid_votes'))['ndc_valid_votes__sum'] or 0
+        #calculating the percentage for ndc
+        ndc_percentage = (ndc_valid_votes / c_total_valid_votes) * 100 
+
+
+        #getting the total valid votes for new force in presidential type election
+        new_force_valid_votes = pollStations.objects.annotate(
+            new_force_valid_votes=Sum('presresult__votes', filter=Q(presresult__party='NEW FORCE'))
+        ).aggregate(Sum('new_force_valid_votes'))['new_force_valid_votes__sum'] or 0 
+
+        #new force percentage 
+        new_force_percentage = (new_force_valid_votes / c_total_valid_votes) * 100
+
+        
+        #getting the total valid votes for movement for change 
+
+        movement_for_change_valid_votes = pollStations.objects.annotate(
+        movement_for_change_valid_votes=Sum('presresult__votes', filter=Q(presresult__party='MOVEMENT FOR CHANGE'))
+        ).aggregate(Sum('movement_for_change_valid_votes'))['movement_for_change_valid_votes__sum'] or 0
+
+        #MOVEMENT FOR CHANGE percentage
+        movement_for_change_percentage = (movement_for_change_valid_votes / c_total_valid_votes) * 100
+
+        #list of party percentages and labels for presidential type election
+        party_data = [npp_percentage, ndc_percentage,new_force_percentage,movement_for_change_percentage]
+        party_labels = ['NPP','NDC','NEW FORCE', 'MOVEMENT FOR CHANGE']
+
+
+        
+        #parliamentary type election
+        
+
+        parl_total_valid_votes = pollStations.objects.annotate(parl_total_valid_votes=Sum('parlresult__votes')).aggregate(Sum('parl_total_valid_votes'))['parl_total_valid_votes__sum'] or 0
+        
+        #getting the total valid votes for ndc in parliamentary type election
+        parl_ndc_valid_votes = pollStations.objects.annotate(parl_ndc_valid_votes=Sum('parlresult__votes',filter=Q(parlresult__party='NDC'))).aggregate(Sum('parl_ndc_valid_votes'))['parl_ndc_valid_votes__sum'] or 0
+
+        #NDC PERCENTAGE FOR PARLIAMENTARY 
+        parl_ndc_percentage = (parl_ndc_valid_votes / parl_total_valid_votes)  * 100
+
+
+        #getting the total valid votes for npp in parliamentary type election
+        parl_npp_valid_votes = pollStations.objects.annotate(
+            parl_npp_valid_votes=Sum('parlresult__votes', filter=Q(parlresult__party='NPP'))
+        ).aggregate(Sum('parl_npp_valid_votes'))['parl_npp_valid_votes__sum'] or 0
+
+        #NPP PERCENTAGE FOR PARLIAMENTARY
+        parl_npp_percentage = (parl_npp_valid_votes / parl_total_valid_votes) * 100
+
+        #getting the total votes for independent candidate for parliamentary type election
+        independent = pollStations.objects.annotate(
+            independent=Sum('parlresult__votes',filter=Q(parlresult__party='INDEPENDENT'))
+        ).aggregate(Sum('independent'))['independent__sum'] or 0
+
+        #percentage for independent candidate
+        independent_percentage = (independent/parl_total_valid_votes) * 100
+
+
+        #parliamentary data list and labels
+        parl_party_data = [parl_npp_percentage,parl_ndc_percentage, independent_percentage]
+        parl_party_labels = ['NPP','NDC','INDEPENDENT']
+
+        #getting the total valid for PRESIDENTIAL
+        total_pres_votes = npp_valid_votes + ndc_valid_votes + new_force_valid_votes + movement_for_change_valid_votes
+
+        #getting the total valid for PARLIAMENTARY 
+        #total_parl_votes = parl_npp_valid_votes + parl_ndc_valid_votes
+        total_parl_votes = parl_total_valid_votes
+
+        station = pollStations.objects.all()
+        station_count = station.count
+        p_results = presResult.objects.all()
+
+        
+        
+        return render(request,'ps_crm_app/dashboard_page.html',{'station_count':station_count, 'p_results':p_results, 'total_registered_voters':total_registered_voters, 'c_total_valid_votes':c_total_valid_votes, 'c_rejected_votes':c_rejected_votes, 'parl_total_valid_votes':parl_total_valid_votes, 'party_data':party_data, 'party_labels':party_labels, 'parl_party_data':parl_party_data, 'parl_party_labels':parl_party_labels, 'total_pres_votes':total_pres_votes, 'total_parl_votes':total_parl_votes,})
+    else:
+        messages.error(request, 'incorrect username or password')
+        return redirect('login')
+
+
+
+
 
 def logout_user(request):
     logout(request)
     messages.success(request, 'You Have been logged out...'.title())
-    return redirect('dashboard')
+    return redirect('login')
 
 
 #registring a user 
@@ -164,6 +235,7 @@ def poll_station_view(request, station_id):
     if request.user.is_authenticated:
         poll_station = pollStations.objects.get(id=station_id)
         
+        agents = regPollAgent.objects.filter(poll_station=poll_station)
         data_entries = presResult.objects.filter(poll_station=poll_station)
         parl_results = parlResult.objects.filter(poll_station=poll_station)
 
@@ -183,6 +255,7 @@ def poll_station_view(request, station_id):
             'parl_results':parl_results,
             'valid_votes':valid_votes['total_votes'],
             'rejected_votes':rejected_votes,
+            'agents':agents,
            
             
         }
@@ -345,3 +418,25 @@ def delete_parliamentary(request, station_id, parl_id):
         messages.success(request, 'you have to be logged in before you can view this page'.title())
         return redirect('poll',station_id=poll_station.id)
         
+
+
+# registration form view for polling agent
+def register_poll_agent(request, station_id):
+    
+    if request.user.is_authenticated:
+        form = PollAgentForm()
+        agents = regPollAgent.objects.all()
+        poll_station = pollStations.objects.get(id=station_id)
+        if request.method == 'POST':
+            form = PollAgentForm(request.POST)
+            if form.is_valid():
+                form.save()
+
+                return redirect('poll',station_id=poll_station.id)
+
+        return render(request, 'ps_crm_app/register_poll_agent.html', {
+            'form': form,
+            'poll_station': poll_station,
+            'agents':agents,
+            
+        })
