@@ -298,6 +298,7 @@ def add_parl_result(request, station_id):
             parl_data = form.save(commit=False)
             parl_data.poll_station = poll_station
             parl_data.save()
+            
             messages.success(request, f"results have been added to parliamentary".title())
             return redirect('poll',station_id=poll_station.id)
        

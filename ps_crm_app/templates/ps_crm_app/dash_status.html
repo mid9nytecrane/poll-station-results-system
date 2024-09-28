@@ -1,11 +1,11 @@
 {% load static %}
 <br>
 <div class="row">
-    <div class="col">
+    <div class="col-3">
         <div class="col-md">
             <div class="card text-center text-white mb-3", id="total-votes">
                 <div class="card-header">
-                    <h5 class="card-title">Total Poll Station</h5>
+                    <h5 class="card-title">TPS</h5>
                     
                 </div>
                 <div class="card-body">
@@ -17,11 +17,11 @@
 
  
 
-    <div class="col">
+    <div class="col-3">
         <div class="col-md">
             <div class="card text-center text-white mb-3 ", id="rejected-votes" >
                 <div class="card-header">
-                    <h5 class="card-title">Rejected/Absent Voters</h5>
+                    <h5 class="card-title">R/A Voters</h5>
 
                 </div>
                 <div class="card-body">
@@ -31,11 +31,11 @@
         </div>
     </div>
 
-    <div class="col">
+    <div class="col-3">
         <div class="col-md">
             <div class="card text-center text-white mb-3 ", id="registered-votes" >
                 <div class="card-header">
-                    <h5 class="card-title">Total-Registered-Voters</h5>
+                    <h5 class="card-title">TR-Voters</h5>
 
                 </div>
                 <div class="card-body">
@@ -45,6 +45,33 @@
         </div>
     </div>
 
-    
+    <!--second status cards form dash_status2.html-->
+    <div class="col-3">
+        <div class="col-md">
+            <div class="card text-center text-white mb-3", id="total-pres-votes">
+                <div class="card-header">
+                    <h5 class="card-title">TVV(presidential)</h5>
+                    
+                </div>
+                <div class="card-body">
+                    <h3 class="card-title">{{ total_pres_votes}}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-3">
+        <div class="col-md">
+            <div class="card text-center text-white mb-3 ", id="total-parl-votes">
+                <div class="card-header">
+                    <h5 class="card-title">TVV(parliamentary)</h5>
+
+                </div>
+                <div class="card-body">
+                    <h3 class="card-title">{{total_parl_votes}}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
     
 </div>

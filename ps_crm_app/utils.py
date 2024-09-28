@@ -18,7 +18,7 @@ def send_otp(request):
     "OTP for login",
     template,
     settings.EMAIL_HOST_USER,
-    ["sheriffsakara112@gmail.com"],
+    ["sheriffsakara41@gmail.com"],
     fail_silently=False,
     )
 
