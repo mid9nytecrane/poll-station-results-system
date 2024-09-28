@@ -126,9 +126,65 @@ def dashboard_page(request):
         #MOVEMENT FOR CHANGE percentage
         movement_for_change_percentage = (movement_for_change_valid_votes / c_total_valid_votes) * 100
 
+        #APC
+        apc_valid_votes = pollStations.objects.annotate(
+            apc_valid_votes=Sum('presresult__votes', filter=Q(presresult__party='APC'))
+        ).aggregate(Sum('apc_valid_votes'))['apc_valid_votes__sum'] or 0
+
+        # APC PERCENTANGE
+        apc_percentage = (apc_valid_votes / c_total_valid_votes) * 100
+
+        #LPG
+        lpg_valid_votes = pollStations.objects.annotate(
+            lpg_valid_votes=Sum('presresult__votes', filter=Q(presresult__party='LPG'))
+        ).aggregate(Sum('lpg_valid_votes'))['lpg_valid_votes__sum'] or 0
+
+        # LPG PERCENTAGE
+        lpg_percentage = (lpg_valid_votes / c_total_valid_votes) * 100
+
+        #GUM 
+        gum_valid_votes = pollStations.objects.annotate(
+            gum_valid_votes=Sum('presresult__votes', filter=Q(presresult__party='GUM'))
+        ).aggregate(Sum('gum_valid_votes'))['gum_valid_votes__sum'] or 0 
+
+        #GUM PERCENTAGE
+        gum_percentage = (gum_valid_votes / c_total_valid_votes) * 100
+
+        #CPP 
+        cpp_valid_votes = pollStations.objects.annotate(
+            cpp_valid_votes=Sum('presresult__votes', filter=Q(presresult__party='CPP'))
+        ).aggregate(Sum('cpp_valid_votes'))['cpp_valid_votes__sum'] or 0 
+
+        #CPP PERCENTAGE
+        cpp_percentage = (cpp_valid_votes / c_total_valid_votes) * 100
+
+        #GFP    
+        gfp_valid_votes = pollStations.objects.annotate(
+            gfp_valid_votes=Sum('presresult__votes', filter=Q(presresult__party='GFP'))
+        ).aggregate(Sum('gfp_valid_votes'))['gfp_valid_votes__sum'] or 0
+
+        #GFP PERCENTAGE
+        gfp_percentage = (gfp_valid_votes / c_total_valid_votes) * 100
+
+        #GCPP
+        gcpp_valid_votes = pollStations.objects.annotate(
+            gcpp_valid_votes=Sum('presresult__votes', filter=Q(presresult__party='GCPP'))
+        ).aggregate(Sum('gcpp_valid_votes'))['gcpp_valid_votes__sum'] or 0 
+
+        #GCPP PERCENTAGE 
+        gcpp_percentage = (gcpp_valid_votes / c_total_valid_votes) * 100
+        
+        #independet 
+        ind_valid_votes = pollStations.objects.annotate(
+            ind_valid_votes=Sum('presresult__votes', filter=Q(presresult__party='INDEPENDENT'))
+        ).aggregate(Sum('ind_valid_votes'))['ind_valid_votes__sum'] or 0
+
+        #independent percentage 
+        ind_percentage = (ind_valid_votes / c_total_valid_votes) * 100
         #list of party percentages and labels for presidential type election
-        party_data = [npp_percentage, ndc_percentage,new_force_percentage,movement_for_change_percentage]
-        party_labels = ['NPP','NDC','NEW FORCE', 'MOVEMENT FOR CHANGE']
+        party_data = [npp_percentage, ndc_percentage,new_force_percentage,movement_for_change_percentage, apc_percentage, lpg_percentage, gum_percentage, cpp_percentage, gfp_percentage, gcpp_percentage,ind_percentage]
+
+        party_labels = ['NPP','NDC','NEW FORCE', 'MOVEMENT FOR CHANGE','APC', 'LPG','GUM','CPP', 'GFP','GCPP', 'INDEPENDENT']
 
 
         
